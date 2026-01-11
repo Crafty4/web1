@@ -1,0 +1,122 @@
+/* Overlay - dark background */
+.overlay {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  z-index: 15;
+  top: 0px;
+  right: 0px;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Modal container */
+.modal {
+  height: 500px;
+  width: 310px;
+  padding: 15px 30px;
+  background-color: white;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.title {
+  color: #333;
+  font-size: 24px;
+  font-family: Arial, Helvetica, sans-serif;
+  margin-bottom: 10px;
+}
+
+.errorMessage {
+  background-color: #fee;
+  color: #c33;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: Arial, Helvetica, sans-serif;
+  border: 1px solid #fcc;
+  margin-bottom: 10px;
+}
+
+.label {
+  color: #333;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 19px;
+  margin: 0;
+}
+
+.input {
+  height: 38px;
+  width: 100%;
+  border-radius: 5px;
+  border: 1px solid #333;
+  padding: 0 10px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  outline: none;
+  border-color: orange;
+}
+
+.totalItems {
+  display: flex;
+  justify-content: center;
+  color: #333;
+  font-size: 19px;
+  font-weight: bolder;
+  margin-top: 10px;
+}
+
+.totalNumber {
+  margin-left: 5px;
+}
+
+.submitButton {
+  background-color: #28a745;
+  height: 44px;
+  width: 100%;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.submitButton:hover {
+  transform: scale(1.05);
+}
+
+.closeButton {
+  background-color: #dc3545;
+  height: 44px;
+  width: 100%;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.closeButton:hover {
+  transform: scale(1.05);
+}

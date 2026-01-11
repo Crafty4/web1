@@ -1,0 +1,687 @@
+/**
+ * ADMIN DASHBOARD STYLES
+ */
+
+.dashboard {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  min-height: calc(100vh - 200px);
+}
+
+.dashboardTitle {
+  font-size: 42px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 30px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.tab {
+  padding: 12px 24px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.tab:hover {
+  color: #333;
+}
+
+.tab.active {
+  color: #ff9900;
+  border-bottom-color: #ff9900;
+}
+
+.tabContent {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sectionTitle {
+  font-size: 28px;
+  color: #333;
+  margin-bottom: 25px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Orders List */
+.ordersList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.ordersColumns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.ordersColumn {
+  background: #fafafa;
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ordersColumn h3 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.orderCard {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 20px;
+  background: #f9f9f9;
+}
+
+.orderHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+}
+
+.orderCustomer {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 8px 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.orderInfo {
+  font-size: 14px;
+  color: #666;
+  margin: 4px 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.orderUser {
+  font-size: 13px;
+  color: #888;
+  margin: 4px 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.orderStatus {
+  display: flex;
+  align-items: center;
+}
+
+.statusBadge {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.statusBadge.pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.statusBadge.accepted {
+  background-color: #d1ecf1;
+  color: #0c5460;
+}
+
+.statusBadge.rejected {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.statusBadge.completed {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.statusBadge.cancelled {
+  background-color: #f0f0f0;
+  color: #555;
+}
+
+.orderItems {
+  margin: 15px 0;
+  padding: 15px;
+  background: white;
+  border-radius: 8px;
+}
+
+.orderItems h4 {
+  margin: 0 0 10px 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.orderItems ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 10px 0;
+}
+
+.orderItems li {
+  padding: 5px 0;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #555;
+}
+
+.orderItemRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.markUnavailableButton {
+  background-color: #ffc107;
+  color: #333;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: Arial, Helvetica, sans-serif;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.markUnavailableButton:hover {
+  background-color: #e0a800;
+  transform: translateY(-1px);
+}
+
+.orderTotal {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 10px 0 0 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.orderActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.acceptButton,
+.completeButton {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.acceptButton:hover,
+.completeButton:hover {
+  background-color: #218838;
+  transform: translateY(-2px);
+}
+
+.rejectButton {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.rejectButton:hover {
+  background-color: #c82333;
+  transform: translateY(-2px);
+}
+
+.orderItemRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.markUnavailableButton {
+  background-color: #ffc107;
+  color: #333;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: Arial, Helvetica, sans-serif;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.markUnavailableButton:hover {
+  background-color: #e0a800;
+  transform: translateY(-1px);
+}
+
+.unavailableSection {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 30px;
+}
+
+.unavailableSection h3 {
+  margin: 0 0 15px 0;
+  color: #856404;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.addBackButton {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.addBackButton:hover {
+  background-color: #218838;
+  transform: translateY(-2px);
+}
+
+.deleteOrderButton {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.deleteOrderButton:hover {
+  background-color: #5a6268;
+  transform: translateY(-2px);
+}
+
+/* Add Item Form */
+.addItemForm {
+  background: #f9f9f9;
+  padding: 25px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+}
+
+.addItemForm h3 {
+  margin: 0 0 20px 0;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #333;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.formGroup label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.formGroup input,
+.formGroup textarea {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 15px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.formGroup input:focus,
+.formGroup textarea:focus {
+  outline: none;
+  border-color: #ff9900;
+}
+
+.addButton {
+  background-color: #ff9900;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.addButton:hover {
+  background-color: #e68900;
+  transform: translateY(-2px);
+}
+
+/* Menu Items List */
+.menuItemsList h3 {
+  margin: 0 0 20px 0;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #333;
+}
+
+.itemsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.menuItemCard {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+  transition: transform 0.3s ease;
+}
+
+.menuItemCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.itemImage {
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+  background: #f0f0f0;
+}
+
+.itemImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.imagePlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f0f0;
+  color: #999;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.imagePlaceholder i {
+  font-size: 32px;
+  margin-bottom: 6px;
+  opacity: 0.5;
+}
+
+.imagePlaceholder span {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.itemInfo {
+  padding: 15px;
+}
+
+.itemInfo input,
+.itemInfo textarea {
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.itemInfo h4 {
+  margin: 0 0 8px 0;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #333;
+}
+
+.itemInfo p {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #ff9900;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.ratingLine {
+  font-size: 14px;
+  color: #666;
+  margin-top: 6px;
+}
+
+.itemActions {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+}
+
+.editButton,
+.saveButton,
+.cancelButton {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-family: Arial, Helvetica, sans-serif;
+  transition: all 0.2s ease;
+}
+
+.editButton {
+  background: #0d6efd;
+  color: white;
+}
+
+.editButton:hover {
+  background: #0b5ed7;
+}
+
+.saveButton {
+  background: #198754;
+  color: white;
+}
+
+.saveButton:hover {
+  background: #157347;
+}
+
+.cancelButton {
+  background: #adb5bd;
+  color: #222;
+}
+
+.cancelButton:hover {
+  background: #9aa1aa;
+}
+
+.deleteButton {
+  width: 100%;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 0 0 12px 12px;
+  cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.deleteButton:hover {
+  background-color: #c82333;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 40px;
+  color: #999;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Gallery */
+.galleryList h3 {
+  margin: 24px 0 12px 0;
+}
+
+.galleryControls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.galleryFormCard {
+  background: #f9f9f9;
+  border: 1px solid #eaeaea;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.galleryFormCard h3 {
+  margin: 0 0 12px 0;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #333;
+}
+
+.galleryFormActions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.photoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.photoCard {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+  display: flex;
+  flex-direction: column;
+}
+
+.photoImage {
+  width: 100%;
+  height: 180px;
+  background: #f0f0f0;
+}
+
+.photoImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photoMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  gap: 10px;
+}
+
+.photoTitle {
+  margin: 0;
+  font-size: 14px;
+  color: #333;
+  font-family: Arial, Helvetica, sans-serif;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.photoDeleteButton {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.photoDeleteButton:hover {
+  background-color: #c82333;
+}
+
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 20px 15px;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+
+  .itemsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .ordersColumns {
+    grid-template-columns: 1fr;
+  }
+
+  .galleryControls {
+    grid-template-columns: 1fr;
+  }
+}
