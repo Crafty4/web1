@@ -111,9 +111,21 @@ export async function POST(request: NextRequest) {
     // Get menu item data
     const { name, price, image, description, rating } = await request.json();
 
-    if (!name || !price || !image) {
+    if (!name || typeof name !== "string" || name.trim() === "") {
       return NextResponse.json(
-        { error: "Name, price, and image are required" },
+        { error: "Name is required and must be a non-empty string" },
+        { status: 400 }
+      );
+    }
+    if (!price || isNaN(parseFloat(price)) || parseFloat(price) < 0) {
+      return NextResponse.json(
+        { error: "Price is required and must be a valid positive number" },
+        { status: 400 }
+      );
+    }
+    if (!image || typeof image !== "string" || image.trim() === "") {
+      return NextResponse.json(
+        { error: "Image is required and must be a non-empty string" },
         { status: 400 }
       );
     }

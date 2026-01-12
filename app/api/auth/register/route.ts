@@ -19,9 +19,27 @@ export async function POST(request: NextRequest) {
     const { username, password, email, phone, address } = await request.json();
 
     // Validate input
-    if (!username || !password || !email || !phone) {
+    if (!username || typeof username !== "string" || username.trim() === "") {
       return NextResponse.json(
-        { error: "All fields are required" },
+        { error: "Username is required and must be a non-empty string" },
+        { status: 400 }
+      );
+    }
+    if (!password || typeof password !== "string" || password.trim() === "") {
+      return NextResponse.json(
+        { error: "Password is required and must be a non-empty string" },
+        { status: 400 }
+      );
+    }
+    if (!email || typeof email !== "string" || email.trim() === "") {
+      return NextResponse.json(
+        { error: "Email is required and must be a non-empty string" },
+        { status: 400 }
+      );
+    }
+    if (!phone || typeof phone !== "string" || phone.trim() === "") {
+      return NextResponse.json(
+        { error: "Phone is required and must be a non-empty string" },
         { status: 400 }
       );
     }

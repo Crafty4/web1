@@ -47,9 +47,25 @@ export async function PATCH(
     const { name, price, image, description, rating, ratingCount, isAvailable } = await request.json();
 
     const updateData: Record<string, any> = {};
-    if (name !== undefined) updateData.name = name;
-    if (price !== undefined) updateData.price = parseFloat(price);
-    if (image !== undefined) updateData.image = image;
+    if (name !== undefined) {
+      if (typeof name !== "string" || name.trim() === "") {
+        return NextResponse.json({ error: "Name must be a non-empty string" }, { status: 400 });
+      }
+      updateData.name = name;
+    }
+    if (price !== undefined) {
+      const priceNum = parseFloat(price);
+      if (isNaN(priceNum) || priceNum < 0) {
+        return NextResponse.json({ error: "Price must be a valid positive number" }, { status: 400 });
+      }
+      updateData.price = priceNum;
+    }
+    if (image !== undefined) {
+      if (typeof image !== "string" || image.trim() === "") {
+        return NextResponse.json({ error: "Image must be a non-empty string" }, { status: 400 });
+      }
+      updateData.image = image;
+    }
     if (description !== undefined) updateData.description = description;
     if (rating !== undefined) updateData.rating = Number(rating);
     if (ratingCount !== undefined) updateData.ratingCount = Number(ratingCount);

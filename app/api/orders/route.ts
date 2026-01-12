@@ -127,16 +127,28 @@ export async function POST(request: NextRequest) {
     const { items, customerName, customerPhone, customerAddress } =
       await request.json();
 
-    if (!items || items.length === 0) {
+    if (!items || !Array.isArray(items) || items.length === 0) {
       return NextResponse.json(
-        { error: "Cart is empty" },
+        { error: "Cart is empty - items array is required" },
         { status: 400 }
       );
     }
 
-    if (!customerName || !customerPhone || !customerAddress) {
+    if (!customerName || typeof customerName !== "string" || customerName.trim() === "") {
       return NextResponse.json(
-        { error: "Customer information is required" },
+        { error: "Customer name is required and must be a non-empty string" },
+        { status: 400 }
+      );
+    }
+    if (!customerPhone || typeof customerPhone !== "string" || customerPhone.trim() === "") {
+      return NextResponse.json(
+        { error: "Customer phone is required and must be a non-empty string" },
+        { status: 400 }
+      );
+    }
+    if (!customerAddress || typeof customerAddress !== "string" || customerAddress.trim() === "") {
+      return NextResponse.json(
+        { error: "Customer address is required and must be a non-empty string" },
         { status: 400 }
       );
     }

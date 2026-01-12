@@ -31,6 +31,13 @@ const User = mongoose.models.User || mongoose.model("User", UserSchema);
 
 async function seedAdmin() {
   try {
+    // Prevent running in production unless explicitly allowed
+    if (process.env.NODE_ENV === "production" && process.env.ALLOW_SEED_IN_PRODUCTION !== "true") {
+      console.error("✗ Seed script is blocked in production");
+      console.error("  Set ALLOW_SEED_IN_PRODUCTION=true to override (not recommended)");
+      process.exit(1);
+    }
+
     // Connect to MongoDB
     const mongoUri = process.env.MONGODB_URI || "mongodb://localhost:27017/cafe-app";
     console.log("Connecting to MongoDB...");

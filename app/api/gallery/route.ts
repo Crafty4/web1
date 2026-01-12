@@ -46,11 +46,12 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const { url, title } = body || {};
-    if (!url) {
-      return NextResponse.json({ error: "url is required" }, { status: 400 });
+    
+    if (!url || typeof url !== "string" || url.trim() === "") {
+      return NextResponse.json({ error: "url is required and must be a non-empty string" }, { status: 400 });
     }
 
-    const photo = await GalleryPhoto.create({ url, title: title || "" });
+    const photo = await GalleryPhoto.create({ url: url.trim(), title: title ? String(title).trim() : "" });
     return NextResponse.json({ success: true, photo });
   } catch (error) {
     console.error("Gallery POST error:", error);

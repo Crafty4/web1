@@ -94,9 +94,27 @@ export async function POST(request: NextRequest) {
 
     const { userId, orderId, message, type } = await request.json();
 
-    if (!userId || !orderId || !message || !type) {
+    if (!userId || typeof userId !== "string" || userId.trim() === "") {
       return NextResponse.json(
-        { error: "userId, orderId, message, and type are required" },
+        { error: "userId is required and must be a non-empty string" },
+        { status: 400 }
+      );
+    }
+    if (!orderId || typeof orderId !== "string" || orderId.trim() === "") {
+      return NextResponse.json(
+        { error: "orderId is required and must be a non-empty string" },
+        { status: 400 }
+      );
+    }
+    if (!message || typeof message !== "string" || message.trim() === "") {
+      return NextResponse.json(
+        { error: "message is required and must be a non-empty string" },
+        { status: 400 }
+      );
+    }
+    if (!type || typeof type !== "string" || type.trim() === "") {
+      return NextResponse.json(
+        { error: "type is required and must be a non-empty string" },
         { status: 400 }
       );
     }

@@ -2,17 +2,23 @@
  * GALLERY UPLOAD (ADMIN)
  *
  * Accepts multipart/form-data with "file" and optional "title".
- * Saves the file under /public/gallery and creates a DB record.
+ * Uploads the file to Cloudinary and creates a DB record.
  */
 
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import GalleryPhoto from "@/models/GalleryPhoto";
 import jwt from "jsonwebtoken";
-import path from "path";
-import { promises as fs } from "fs";
+import { v2 as cloudinary } from "cloudinary";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key-change-in-production";
+
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 export async function POST(request: NextRequest) {
   try {
@@ -34,6 +40,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
+    // Validate Cloudinary credentials
+    if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+      return NextResponse.json(
+        { error: "Cloudinary configuration is missing" },
+        { status: 500 }
+      );
+    }
+
     const form = await request.formData();
     const file = form.get("file") as File | null;
     const title = (form.get("title") as string) || "";
@@ -42,26 +56,29 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "file is required" }, { status: 400 });
     }
 
-    // Ensure target directory exists
-    const uploadDir = path.join(process.cwd(), "public", "gallery");
-    await fs.mkdir(uploadDir, { recursive: true });
-
-    // Create unique filename
-    const ext = path.extname(file.name || "") || ".jpg";
-    const base = path.basename(file.name || "upload", ext).replace(/\s+/g, "-");
-    const unique = `${base}-${Date.now()}${ext}`;
-    const filePath = path.join(uploadDir, unique);
-
-    // Save file
+    // Convert file to buffer for Cloudinary
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
-    await fs.writeFile(filePath, buffer);
 
-    // Public URL path
-    const publicUrl = `/gallery/${unique}`;
+    // Upload to Cloudinary
+    const uploadResult = await new Promise((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        {
+          folder: "gallery",
+          resource_type: "auto",
+        },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      ).end(buffer);
+    }) as any;
 
-    // Save to DB
-    const photo = await GalleryPhoto.create({ url: publicUrl, title });
+    // Save to DB with Cloudinary URL
+    const photo = await GalleryPhoto.create({
+      url: uploadResult.secure_url,
+      title: title || "",
+    });
 
     return NextResponse.json({ success: true, photo });
   } catch (error) {

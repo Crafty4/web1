@@ -22,9 +22,15 @@ export async function POST(request: NextRequest) {
     const { username, password } = await request.json();
 
     // Validate input
-    if (!username || !password) {
+    if (!username || typeof username !== "string" || username.trim() === "") {
       return NextResponse.json(
-        { error: "Username and password are required" },
+        { error: "Username is required and must be a non-empty string" },
+        { status: 400 }
+      );
+    }
+    if (!password || typeof password !== "string" || password.trim() === "") {
+      return NextResponse.json(
+        { error: "Password is required and must be a non-empty string" },
         { status: 400 }
       );
     }
