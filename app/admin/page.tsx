@@ -57,7 +57,7 @@ export default function AdminDashboard() {
   const router = useRouter();
   const { isAuthenticated, user } = useAuth();
 
-  const [activeTab, setActiveTab] = useState<"menu" | "orders" | "gallery">("orders");
+  const [activeTab, setActiveTab] = useState<"menu" | "orders" | "gallery" | "account">("orders");
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
@@ -73,6 +73,8 @@ export default function AdminDashboard() {
     description: "",
     rating: "",
   });
+  const [editItemImageFile, setEditItemImageFile] = useState<File | null>(null);
+  const [editItemImagePreview, setEditItemImagePreview] = useState<string>("");
 
   // New menu item form state
   const [newItem, setNewItem] = useState({
@@ -81,6 +83,15 @@ export default function AdminDashboard() {
     image: "",
     description: "",
   });
+  const [newItemImageFile, setNewItemImageFile] = useState<File | null>(null);
+  const [newItemImagePreview, setNewItemImagePreview] = useState<string>("");
+
+  // Account settings state
+  const [accountUsername, setAccountUsername] = useState("");
+  const [accountPassword, setAccountPassword] = useState("");
+  const [accountConfirmPassword, setAccountConfirmPassword] = useState("");
+  const [accountMessage, setAccountMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [accountLoading, setAccountLoading] = useState(false);
 
   // Redirect if not admin
   useEffect(() => {
@@ -97,6 +108,9 @@ export default function AdminDashboard() {
       fetchMenuItems();
       fetchOrders();
       fetchGalleryPhotos();
+      if (user) {
+        setAccountUsername(user.username);
+      }
     }
   }, [isAuthenticated, user]);
 
@@ -261,22 +275,56 @@ export default function AdminDashboard() {
   };
 
   /**
+   * UPLOAD IMAGE TO CLOUDINARY
+   */
+  const uploadImageToCloudinary = async (file: File): Promise<string> => {
+    const token = getToken();
+    if (!token) {
+      throw new Error("Not authenticated");
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch("/api/gallery/upload", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+    if (!data.success || !data.photo?.url) {
+      throw new Error(data.error || "Failed to upload image");
+    }
+
+    return data.photo.url;
+  };
+
+  /**
    * ADD MENU ITEM
    */
   const handleAddItem = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newItem.name || !newItem.price || !newItem.image) {
-      alert("Please fill in all required fields");
+    if (!newItem.name || !newItem.price) {
+      alert("Please fill in name and price");
       return;
     }
 
-    // Normalize image path - ensure it starts with "/"
-    let imagePath = newItem.image.trim();
-    if (imagePath && !imagePath.startsWith("/") && !imagePath.startsWith("http://") && !imagePath.startsWith("https://")) {
-      imagePath = "/" + imagePath;
+    if (!newItemImageFile && !newItem.image) {
+      alert("Please select an image file or enter an image URL");
+      return;
     }
 
     try {
+      let imageUrl = newItem.image;
+
+      // Upload image if file is selected
+      if (newItemImageFile) {
+        imageUrl = await uploadImageToCloudinary(newItemImageFile);
+      }
+
       const token = getToken();
       const response = await fetch("/api/menu", {
         method: "POST",
@@ -285,8 +333,10 @@ export default function AdminDashboard() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          ...newItem,
-          image: imagePath,
+          name: newItem.name,
+          price: newItem.price,
+          image: imageUrl,
+          description: newItem.description,
         }),
       });
 
@@ -294,13 +344,15 @@ export default function AdminDashboard() {
 
       if (data.success) {
         setNewItem({ name: "", price: "", image: "", description: "" });
+        setNewItemImageFile(null);
+        setNewItemImagePreview("");
         fetchMenuItems(); // Refresh menu
         alert("Menu item added successfully!");
       } else {
         alert(data.error || "Failed to add item");
       }
-    } catch (error) {
-      alert("Failed to add menu item");
+    } catch (error: any) {
+      alert(error.message || "Failed to add menu item");
     }
   };
 
@@ -346,6 +398,61 @@ export default function AdminDashboard() {
       description: item.description || "",
       rating: item.rating?.toString() || "",
     });
+    setEditItemImageFile(null);
+    setEditItemImagePreview("");
+  };
+
+  /**
+   * CANCEL EDIT MODE
+   */
+  const handleCancelEdit = () => {
+    setEditingItemId(null);
+    setEditItemImageFile(null);
+    setEditItemImagePreview("");
+  };
+
+  /**
+   * HANDLE NEW ITEM IMAGE SELECTION
+   */
+  const handleNewItemImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith("image/")) {
+        alert("Please select an image file");
+        return;
+      }
+      setNewItemImageFile(file);
+      setNewItem({ ...newItem, image: "" }); // Clear text input
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setNewItemImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  /**
+   * HANDLE EDIT ITEM IMAGE SELECTION
+   */
+  const handleEditItemImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith("image/")) {
+        alert("Please select an image file");
+        return;
+      }
+      setEditItemImageFile(file);
+      setEditForm({ ...editForm, image: "" }); // Clear text input
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setEditItemImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   /**
@@ -357,12 +464,14 @@ export default function AdminDashboard() {
       return;
     }
 
-    let imagePath = editForm.image.trim();
-    if (imagePath && !imagePath.startsWith("/") && !imagePath.startsWith("http://") && !imagePath.startsWith("https://")) {
-      imagePath = "/" + imagePath;
-    }
-
     try {
+      let imageUrl = editForm.image;
+
+      // Upload image if file is selected
+      if (editItemImageFile) {
+        imageUrl = await uploadImageToCloudinary(editItemImageFile);
+      }
+
       const token = getToken();
       const response = await fetch(`/api/menu/${id}`, {
         method: "PATCH",
@@ -373,7 +482,7 @@ export default function AdminDashboard() {
         body: JSON.stringify({
           name: editForm.name,
           price: editForm.price,
-          image: imagePath,
+          image: imageUrl,
           description: editForm.description,
           rating: editForm.rating ? parseFloat(editForm.rating) : undefined,
         }),
@@ -382,21 +491,16 @@ export default function AdminDashboard() {
       const data = await response.json();
       if (data.success) {
         setEditingItemId(null);
+        setEditItemImageFile(null);
+        setEditItemImagePreview("");
         fetchMenuItems();
         alert("Menu item updated");
       } else {
         alert(data.error || "Failed to update item");
       }
-    } catch (error) {
-      alert("Failed to update menu item");
+    } catch (error: any) {
+      alert(error.message || "Failed to update menu item");
     }
-  };
-
-  /**
-   * CANCEL EDIT MODE
-   */
-  const handleCancelEdit = () => {
-    setEditingItemId(null);
   };
 
   /**
@@ -543,6 +647,12 @@ export default function AdminDashboard() {
             onClick={() => setActiveTab("gallery")}
           >
             Gallery
+          </button>
+          <button
+            className={`${styles.tab} ${activeTab === "account" ? styles.active : ""}`}
+            onClick={() => setActiveTab("account")}
+          >
+            Account Settings
           </button>
         </div>
 
@@ -827,14 +937,34 @@ export default function AdminDashboard() {
                   </div>
                 </div>
                 <div className={styles.formGroup}>
-                  <label>Image URL *</label>
+                  <label>Image *</label>
                   <input
-                    type="text"
-                    value={newItem.image}
-                    onChange={(e) => setNewItem({ ...newItem, image: e.target.value })}
-                    placeholder="/image.jpg"
-                    required
+                    type="file"
+                    accept="image/*"
+                    onChange={handleNewItemImageChange}
+                    className={styles.fileInput}
                   />
+                  {newItemImagePreview && (
+                    <div className={styles.imagePreview}>
+                      <img src={newItemImagePreview} alt="Preview" />
+                    </div>
+                  )}
+                  {!newItemImageFile && (
+                    <input
+                      type="text"
+                      value={newItem.image}
+                      onChange={(e) => {
+                        setNewItem({ ...newItem, image: e.target.value });
+                        setNewItemImageFile(null);
+                        setNewItemImagePreview("");
+                      }}
+                      placeholder="Or enter image URL"
+                      className={styles.input}
+                    />
+                  )}
+                  <small className={styles.helpText}>
+                    Select an image file from your device or enter an image URL
+                  </small>
                 </div>
                 <div className={styles.formGroup}>
                   <label>Description</label>
@@ -902,12 +1032,32 @@ export default function AdminDashboard() {
                               value={editForm.price}
                               onChange={(e) => setEditForm({ ...editForm, price: e.target.value })}
                             />
-                            <input
-                              type="text"
-                              value={editForm.image}
-                              onChange={(e) => setEditForm({ ...editForm, image: e.target.value })}
-                              placeholder="/image.jpg"
-                            />
+                            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleEditItemImageChange}
+                                className={styles.fileInput}
+                              />
+                              {editItemImagePreview && (
+                                <div className={styles.imagePreview}>
+                                  <img src={editItemImagePreview} alt="Preview" />
+                                </div>
+                              )}
+                              {!editItemImageFile && (
+                                <input
+                                  type="text"
+                                  value={editForm.image}
+                                  onChange={(e) => {
+                                    setEditForm({ ...editForm, image: e.target.value });
+                                    setEditItemImageFile(null);
+                                    setEditItemImagePreview("");
+                                  }}
+                                  placeholder="Or enter image URL"
+                                  className={styles.input}
+                                />
+                              )}
+                            </div>
                             <textarea
                               value={editForm.description}
                               onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
@@ -1055,6 +1205,147 @@ export default function AdminDashboard() {
                   ))}
                 </div>
               )}
+            </div>
+          </div>
+        )}
+
+        {/* Account Settings Tab */}
+        {activeTab === "account" && (
+          <div className={styles.tabContent}>
+            <h2 className={styles.sectionTitle}>Account Settings</h2>
+            <p className={styles.sectionSubtitle}>Update your username and password</p>
+
+            <div className={styles.accountForm}>
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  setAccountMessage(null);
+
+                  // Validate password if provided
+                  if (accountPassword) {
+                    if (accountPassword.length < 6) {
+                      setAccountMessage({ type: "error", text: "Password must be at least 6 characters long" });
+                      return;
+                    }
+                    if (accountPassword !== accountConfirmPassword) {
+                      setAccountMessage({ type: "error", text: "Passwords do not match" });
+                      return;
+                    }
+                  }
+
+                  // Validate username if changed
+                  if (accountUsername !== user?.username) {
+                    if (accountUsername.trim() === "") {
+                      setAccountMessage({ type: "error", text: "Username cannot be empty" });
+                      return;
+                    }
+                  }
+
+                  // If nothing changed
+                  if (accountUsername === user?.username && !accountPassword) {
+                    setAccountMessage({ type: "error", text: "No changes to save" });
+                    return;
+                  }
+
+                  try {
+                    setAccountLoading(true);
+                    const token = getToken();
+                    if (!token) {
+                      setAccountMessage({ type: "error", text: "Not authenticated" });
+                      return;
+                    }
+
+                    const response = await fetch("/api/auth/update-credentials", {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                      },
+                      body: JSON.stringify({
+                        username: accountUsername !== user?.username ? accountUsername.trim() : undefined,
+                        password: accountPassword ? accountPassword : undefined,
+                      }),
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                      setAccountMessage({ type: "success", text: "Credentials updated successfully!" });
+                      setAccountPassword("");
+                      setAccountConfirmPassword("");
+
+                      // If username changed, update local state
+                      if (data.user?.username) {
+                        setAccountUsername(data.user.username);
+                      }
+
+                      // Refresh page to update auth context
+                      window.location.reload();
+                    } else {
+                      setAccountMessage({ type: "error", text: data.error || "Failed to update credentials" });
+                    }
+                  } catch (error) {
+                    setAccountMessage({ type: "error", text: "Network error. Please try again." });
+                  } finally {
+                    setAccountLoading(false);
+                  }
+                }}
+              >
+                <div className={styles.formGroup}>
+                  <label>Username</label>
+                  <input
+                    type="text"
+                    value={accountUsername}
+                    onChange={(e) => setAccountUsername(e.target.value)}
+                    placeholder="Enter new username"
+                    className={styles.input}
+                  />
+                  <small className={styles.helpText}>
+                    {accountUsername === user?.username ? "No change" : "Username will be updated"}
+                  </small>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label>New Password (optional)</label>
+                  <input
+                    type="password"
+                    value={accountPassword}
+                    onChange={(e) => setAccountPassword(e.target.value)}
+                    placeholder="Enter new password (leave empty to keep current)"
+                    className={styles.input}
+                  />
+                  <small className={styles.helpText}>
+                    Leave empty if you don't want to change your password
+                  </small>
+                </div>
+
+                {accountPassword && (
+                  <div className={styles.formGroup}>
+                    <label>Confirm New Password</label>
+                    <input
+                      type="password"
+                      value={accountConfirmPassword}
+                      onChange={(e) => setAccountConfirmPassword(e.target.value)}
+                      placeholder="Confirm new password"
+                      className={styles.input}
+                    />
+                  </div>
+                )}
+
+                {accountMessage && (
+                  <div
+                    className={
+                      accountMessage.type === "success" ? styles.successMessage : styles.errorMessage
+                    }
+                  >
+                    {accountMessage.text}
+                  </div>
+                )}
+
+                <button type="submit" className={styles.submitButton} disabled={accountLoading}>
+                  {accountLoading ? "Updating..." : "Update Credentials"}
+                </button>
+              </form>
             </div>
           </div>
         )}

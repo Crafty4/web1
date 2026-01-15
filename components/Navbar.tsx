@@ -100,13 +100,22 @@ export default function Navbar() {
                     )}
                   </div>
                   {user?.role === "user" && (
-                    <Link 
-                      href="/orders" 
-                      className={styles.profileLink}
-                      onClick={() => setIsProfileOpen(false)}
-                    >
-                      <i className="fa-solid fa-clock-rotational-left"></i> Order History
-                    </Link>
+                    <>
+                      <Link 
+                        href="/orders" 
+                        className={styles.profileLink}
+                        onClick={() => setIsProfileOpen(false)}
+                      >
+                        <i className="fa-solid fa-clock-rotational-left"></i> Order History
+                      </Link>
+                      <Link 
+                        href="/profile" 
+                        className={styles.profileLink}
+                        onClick={() => setIsProfileOpen(false)}
+                      >
+                        <i className="fa-solid fa-user-gear"></i> Account Settings
+                      </Link>
+                    </>
                   )}
                 </div>
               )}

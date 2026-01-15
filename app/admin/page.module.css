@@ -387,6 +387,26 @@
   border-color: #ff9900;
 }
 
+.fileInput {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: Arial, Helvetica, sans-serif;
+  cursor: pointer;
+}
+
+.imagePreview {
+  margin-top: 8px;
+}
+
+.imagePreview img {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: 8px;
+  border: 2px solid #e0e0e0;
+}
+
 .addButton {
   background-color: #ff9900;
   color: white;
@@ -684,4 +704,92 @@
   .galleryControls {
     grid-template-columns: 1fr;
   }
+}
+
+/* Account Settings Form */
+.accountForm {
+  max-width: 600px;
+  margin: 0 auto;
+  background: white;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.accountForm .formGroup {
+  margin-bottom: 24px;
+}
+
+.accountForm .input {
+  padding: 12px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: Arial, Helvetica, sans-serif;
+  transition: border-color 0.3s ease;
+}
+
+.accountForm .input:focus {
+  outline: none;
+  border-color: #ff9900;
+}
+
+.helpText {
+  font-size: 14px;
+  color: #666;
+  font-family: Arial, Helvetica, sans-serif;
+  margin-top: 4px;
+}
+
+.successMessage {
+  padding: 12px 16px;
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: Arial, Helvetica, sans-serif;
+  margin-bottom: 20px;
+}
+
+.errorMessage {
+  padding: 12px 16px;
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: Arial, Helvetica, sans-serif;
+  margin-bottom: 20px;
+}
+
+.submitButton {
+  padding: 14px 24px;
+  background-color: #ff9900;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: Arial, Helvetica, sans-serif;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+.submitButton:hover:not(:disabled) {
+  background-color: #e68900;
+}
+
+.submitButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.sectionSubtitle {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 30px;
+  text-align: center;
+  font-family: Arial, Helvetica, sans-serif;
 }
